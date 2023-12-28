@@ -7,10 +7,6 @@
     "dev": "nodemon src/Server.js",
     "start": "node src/Server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
   "author": "Goutam Marko",
   "license": "ISC",
   "devDependencies": {
@@ -29,8 +25,9 @@
     "fs": "^0.0.1-security",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",
-    "node-cron": "^3.0.2",
+    "mongodb": "^6.3.0",
     "mongoose": "^5.5.3",
+    "node-cron": "^3.0.2",
     "socket.io": "^4.7.2"
   }
 }
