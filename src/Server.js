@@ -27,40 +27,39 @@ app.use(function (req, res) {
 const mongoose = require("mongoose");
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
-const client = new MongoClient(DB_URL, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
-async function run() {
+async function connectToDatabase() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+    await mongoose.connect(DB_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+      },
+    });
+    console.log("MongoDB connected successfully!");
+  } catch (error) {
+    console.error("Connection error:", error);
+    process.exit(1); // Exit gracefully on connection failure
   }
 }
-run().catch(console.dir);
 
+// Handle MongoDB connection events
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
+db.once("open", async () => {
+  try {
+    
+    app.listen(PORT, () => {
+      console.log(`API server listening on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Server startup error:", error);
+    await mongoose.disconnect(); // Disconnect MongoDB if server fails to start
+    process.exit(1); // Exit gracefully
+  }
+});
 
-// mongoose.connect(DB_URL, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true
-// });
-
-// const db = mongoose.connection;
-// db.on("error", console.error.bind(console, "connection error:"));
-// db.on("open", function () {
-//   console.log("mongoDB connected..");
-//   // start server
-//   app.listen(PORT, function () {
-//     console.log("api server is listening port : " + PORT);
-//   });
-// });
-
+// Initiate the connection process
+connectToDatabase();

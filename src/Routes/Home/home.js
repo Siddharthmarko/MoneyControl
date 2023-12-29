@@ -119,6 +119,7 @@ router.post("/expense-tag", async (req, res, next) => {
 });
 
 router.post("/expense-data-type", (req, res) => {
+  console.log("got /expense-data-type")
     const data = req.body;
     const newLogType = new LogType(data); // Create a new LogType document
     newLogType.save(function (err, note) {
