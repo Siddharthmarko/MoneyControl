@@ -24,19 +24,43 @@ app.use(function (req, res) {
   err.status = 404;
   res.json(err);
 });
-
 const mongoose = require("mongoose");
-mongoose.connect(DB_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-db.on("open", function () {
-  console.log("mongoDB connected..");
-  // start server
-  app.listen(PORT, function () {
-    console.log("api server is listening port : " + PORT);
-  });
+const client = new MongoClient(DB_URL, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
 });
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+run().catch(console.dir);
+
+
+// mongoose.connect(DB_URL, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true
+// });
+
+// const db = mongoose.connection;
+// db.on("error", console.error.bind(console, "connection error:"));
+// db.on("open", function () {
+//   console.log("mongoDB connected..");
+//   // start server
+//   app.listen(PORT, function () {
+//     console.log("api server is listening port : " + PORT);
+//   });
+// });
+
